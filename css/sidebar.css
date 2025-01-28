@@ -1,0 +1,88 @@
+/* Sidebar Styling */
+.dashboard-sidebar {
+    width: 300px; /* Static expanded width */
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #2E8B57;
+    color: white;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #2E8B57;
+}
+
+.sidebar-header img {
+    width: 120%; /* Adjust as needed for logo size */
+    height: auto;
+    opacity: 1; /* Ensure the logo is always visible */
+}
+
+/* Sidebar Navigation */
+.dashboard-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.dashboard-sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.dashboard-sidebar ul li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    gap: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard-sidebar ul li a:hover {
+    background-color: #1b5e20;
+}
+
+.dashboard-sidebar ul li a .material-icons {
+    font-size: 24px;
+}
+
+.dashboard-sidebar ul li a .link-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 1; /* Always visible */
+}
+
+/* Toggle Button */
+.toggle-sidebar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 10px auto;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-sidebar:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

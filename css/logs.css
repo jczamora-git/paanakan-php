@@ -1,0 +1,91 @@
+/* General Styles for Logs Page */
+
+/* Ensure full-width content */
+.logs-container {
+    width: 100%; /* Full-width */
+    margin: 0 auto;
+    padding: 20px; /* Add some spacing */
+}
+
+/* Summary Cards */
+.summary-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px); /* Slight hover effect */
+}
+
+.summary-card h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #333;
+}
+
+.summary-card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+/* Table Container */
+.table-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow-x: auto; /* Add horizontal scrolling for smaller screens */
+    padding: 15px;
+    margin-top: 20px;
+}
+
+/* Table Styling */
+.table-container table {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between cells */
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Add row separators */
+}
+
+.table-container th {
+    background-color: #f8f9fa; /* Light gray background for header */
+    font-weight: bold;
+    color: #333;
+}
+
+.table-container tr:hover {
+    background-color: #f1f1f1; /* Light hover effect for rows */
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.pagination .page-item {
+    margin: 0 5px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff; /* Active page color */
+    border-color: #007bff;
+    color: #fff;
+}

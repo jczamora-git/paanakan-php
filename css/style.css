@@ -1,0 +1,129 @@
+/* General reset for body and html */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    height: 100%;
+    background: #2E8B57; /* Set the green background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Login/Registration container styles */
+.register-container,
+.login-container {
+    background-color: #fff; /* White container background */
+    padding: 70px;
+    border-radius: 16px; /* More rounded edges */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center;
+    max-width: 900px; /* Increase the maximum width */
+    width: 100%; /* Ensure responsiveness */
+}
+
+/* Logo styles */
+.logo img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Button styles */
+.custom-btn {
+    background-color: #2e7d32; /* Darker green button */
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+    background-color: #1b5e20; /* Darker green on hover */
+}
+
+/* Input field styling */
+.input-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-container i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #4CAF50;
+}
+
+.form-control {
+    width: 100%;
+    padding-left: 35px;
+    padding-right: 40px;
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* Password visibility toggle button */
+.show-hide-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: #4CAF50;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 15px;
+}
+
+/* Link styles */
+.small-text {
+    font-size: 14px;
+}
+
+.small-text a {
+    color: #2e7d32;
+    text-decoration: none;
+}
+
+.small-text a:hover {
+    text-decoration: underline;
+}
+
+/* Title styles */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.title span {
+    font-size: 16px;
+    display: block;
+    margin-top: 5px;
+    color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-container {
+        max-width: 90%; /* Make it responsive for tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        max-width: 95%; /* Make it responsive for mobile devices */
+    }
+}

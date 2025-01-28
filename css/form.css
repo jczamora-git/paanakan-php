@@ -1,0 +1,36 @@
+/* General styles for sections */
+.section-container {
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 16px; /* Inner spacing */
+    margin-bottom: 20px; /* Spacing between sections */
+    background-color: #f9f9f9; /* Light background for contrast */
+}
+
+/* Section headers */
+.section-container h5 {
+    margin-top: 0; /* Remove default margin */
+    margin-bottom: 16px; /* Add spacing below the header */
+    font-size: 18px; /* Slightly larger font size */
+    color: #333; /* Darker color for text */
+    font-weight: 600; /* Bold font */
+}
+
+/* Form controls (optional, for a clean look) */
+.form-control {
+    border-radius: 5px; /* Rounded input fields */
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #007bff; /* Default Bootstrap primary color */
+    border-color: #272727;
+    border-radius: 6px; /* Rounded button */
+    padding: 10px 20px; /* Adjust padding for better click area */
+}
+
+/* Optional hover effect for sections */
+.section-container:hover {
+    border-color: #272727; /* Highlight border on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}

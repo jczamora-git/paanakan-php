@@ -1,0 +1,63 @@
+/* dashboard.css */
+
+/* General reset for body and html */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    height: 100%;
+    background: #ffffff;
+}
+
+/* Dashboard container */
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Main Content */
+.dashboard-main-content {
+    margin-left: 250px; /* Default margin for collapsed sidebar */
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+
+Card Styling
+.card {
+    height: 100%; /* Ensures cards take full height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.row.g-3 {
+    display: flex; /* Use flex layout for equal-height cards */
+    flex-wrap: wrap; /* Ensure wrapping for responsiveness */
+    gap: 15px; /* Spacing between cards */
+}
+
+.col-lg-3.col-md-6.col-sm-12 {
+    flex: 1 1 calc(25% - 15px); /* Ensure cards take equal space */
+    max-width: calc(25% - 15px);
+}
+
+@media (max-width: 768px) {
+    .col-lg-3.col-md-6.col-sm-12 {
+        flex: 1 1 calc(50% - 15px); /* Adjust for smaller screens */
+        max-width: calc(50% - 15px);
+    }
+}
+
+@media (max-width: 576px) {
+    .col-lg-3.col-md-6.col-sm-12 {
+        flex: 1 1 100%; /* Full width on mobile */
+        max-width: 100%;
+    }
+}
