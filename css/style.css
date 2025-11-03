@@ -5,7 +5,8 @@ html {
     padding: 0;
     font-family: 'Poppins', sans-serif;
     height: 100%;
-    background: #2E8B57; /* Set the green background */
+    background: #e8f5e9; /* Soft medical green background */
+    color: #222;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,6 +22,7 @@ html {
     text-align: center;
     max-width: 900px; /* Increase the maximum width */
     width: 100%; /* Ensure responsiveness */
+    overflow: auto;
 }
 
 /* Logo styles */
@@ -127,3 +129,165 @@ html {
         max-width: 95%; /* Make it responsive for mobile devices */
     }
 }
+
+/* --- Medical Green Inventory Theme Enhancements --- */
+
+.dashboard-main-content {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 24px rgba(39, 174, 96, 0.08);
+    padding: 32px 32px 32px 32px;
+    margin-top: 32px;
+}
+
+.table-container {
+    background: #f6fffa;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(39, 174, 96, 0.07);
+    border: 1px solid #b2dfdb;
+}
+
+.table-container thead {
+    background: #27ae60;
+    color: #fff;
+    font-size: 1.08rem;
+    letter-spacing: 0.5px;
+}
+
+.table-container tbody tr {
+    transition: background 0.2s;
+}
+
+.table-container tbody tr:hover {
+    background: #e0f2f1;
+}
+
+.table-container th, .table-container td {
+    border-right: none;
+    font-size: 1rem;
+}
+
+/* Modern Buttons */
+.btn-success, .btn-primary, .btn-secondary {
+    border-radius: 8px !important;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.btn-success {
+    background: #27ae60 !important;
+    border: none;
+}
+.btn-success:hover {
+    background: #219150 !important;
+}
+.btn-primary {
+    background: #219150 !important;
+    border: none;
+}
+.btn-primary:hover {
+    background: #176943 !important;
+}
+.btn-secondary {
+    background: #b2dfdb !important;
+    color: #219150 !important;
+    border: none;
+}
+.btn-secondary:hover {
+    background: #80cbc4 !important;
+    color: #176943 !important;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25em 0.85em;
+    border-radius: 12px;
+    font-size: 0.95em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+.status-instock {
+    background: #e8f5e9;
+    color: #219150;
+    border: 1px solid #27ae60;
+}
+.status-medium {
+    background: #fffde7;
+    color: #fbc02d;
+    border: 1px solid #ffe082;
+}
+.status-low {
+    background: #ffebee;
+    color: #e53935;
+    border: 1px solid #ffcdd2;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(39, 174, 96, 0.12);
+    border: 1px solid #b2dfdb;
+}
+.modal-header {
+    background: #e8f5e9;
+    border-bottom: 1px solid #b2dfdb;
+}
+.modal-title {
+    color: #219150;
+    font-weight: 700;
+}
+
+/* Table Action Buttons */
+.btn-xs {
+    color: #219150 !important;
+    background: #e8f5e9 !important;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    margin-right: 2px;
+}
+.btn-xs:hover {
+    background: #b2dfdb !important;
+    color: #176943 !important;
+}
+
+/* Pagination */
+.pagination .page-link {
+    background: #e8f5e9;
+    color: #219150;
+    border: 1px solid #b2dfdb;
+}
+.pagination .page-link:hover {
+    background: #b2dfdb;
+    color: #176943;
+}
+.pagination .page-item.active .page-link {
+    background: #27ae60;
+    color: #fff;
+    border-color: #27ae60;
+}
+
+/* Alerts */
+.alert-success {
+    background: #e8f5e9;
+    color: #219150;
+    border: 1px solid #27ae60;
+}
+.alert-danger {
+    background: #ffebee;
+    color: #e53935;
+    border: 1px solid #ffcdd2;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .dashboard-main-content {
+        padding: 12px;
+        margin-top: 12px;
+    }
+    .table-container {
+        padding: 8px;
+    }
+}
+
+    

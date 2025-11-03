@@ -1,0 +1,303 @@
+/* General Body and Layout */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f9;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Note: .dashboard-main-content margins are defined in sidebar.css and components.css */
+
+/* Flex Grid Layout for Widgets */
+.row.g-3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.col-md-3 {
+    flex: 1 1 23%;
+    min-width: 250px;
+}
+
+/* Card Style for Charts */
+.card {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Appointment Section */
+.appointments-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 40px;
+}
+
+.appointments-section h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.appointment {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.appointment .d-flex {
+    font-size: 14px;
+}
+
+.appointment .d-flex div {
+    font-weight: 600;
+}
+
+.appointment hr {
+    margin: 10px 0;
+}
+
+/* Charts Styling */
+canvas {
+    width: 100% !important;
+    height: 400px !important;
+}
+
+/* Widget Container Styling */
+.widget {
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #ffffff;
+    flex-direction: row-reverse;
+}
+
+.text-container {
+    margin-right: 20px;
+    text-align: left;
+    flex: 1;
+}
+
+.widget h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.widget .h2 {
+    font-size: 30px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.widget .text-muted {
+    font-size: 14px;
+    color: #8e44ad;
+}
+
+/* Icon Container (Gradient Circle) */
+.icon-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+/* Gradient Backgrounds for Icons */
+.new-patients .icon-container {
+    background: linear-gradient(45deg, #61E8E1, #2F0BD2) !important;
+}
+
+.todays-appointment .icon-container {
+    background: linear-gradient(45deg, #F25757, #D20B89) !important;
+}
+
+.available-rooms .icon-container {
+    background: linear-gradient(45deg, #272727, #000000) !important;
+}
+
+.sales .icon-container {
+    background: linear-gradient(45deg, #FCAB64, #D25E0B) !important;
+}
+
+/* Charts and Side Panel */
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Appointments Section Adjustments */
+.appointments-section {
+    margin-top: 20px;
+    padding-top: 0;
+}
+
+/* Side Panel Styling */
+.side-panel {
+    margin-top: 20px;
+    flex: 1;
+    max-width: 500px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-panel h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-icon {
+    cursor: pointer;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #0056b3;
+}
+
+.table {
+    width: 100%;
+    color: black;
+}
+
+.table th, .table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+#midwifeListModal {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Styling for Add/Minus buttons */
+.add-button, .minus-button {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.minus-button {
+    background-color: #dc3545;
+}
+
+.add-button:hover {
+    background-color: #218838;
+}
+
+.minus-button:hover {
+    background-color: #c82333;
+}
+
+/* Responsive Design for Tablets and Mobile */
+@media (max-width: 992px) {
+    .chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    canvas {
+        width: 100% !important;
+        height: 300px !important;
+    }
+    
+    .side-panel {
+        width: 90%;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-3 {
+        flex: 1 1 100%;
+        min-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .widget {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .text-container {
+        margin-right: 0;
+        margin-top: 10px;
+    }
+
+    .icon-container {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+
+    .appointments-section {
+        padding: 15px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    canvas {
+        height: 300px !important;
+    }
+
+    .side-panel {
+        width: 100%;
+        max-width: none;
+    }
+}

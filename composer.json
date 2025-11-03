@@ -1,0 +1,8 @@
+{
+    "require": {
+        "tecnickcom/tcpdf": "^6.6",
+        "sendgrid/sendgrid": "^8.0",
+        "vlucas/phpdotenv": "^5.5",
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

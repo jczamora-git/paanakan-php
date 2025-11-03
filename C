@@ -1,0 +1,3 @@
+
+curl.cainfo = "C:\\xampp\\htdocs\\paanakan\\certs\\cacert.pem"
+openssl.cafile = "C:\\xampp\\htdocs\\paanakan\\certs\\cacert.pem"

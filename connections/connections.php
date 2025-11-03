@@ -3,7 +3,7 @@
     function connection(){
         $host = "localhost";
         $username = "root";
-        $password = "admin";
+        $password = "";
         $dbname = "paanakandb";
         
         $dsn = "mysql:host=$host;dbname=$dbname";

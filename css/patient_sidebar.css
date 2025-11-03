@@ -1,0 +1,224 @@
+/* Patient Sidebar */
+.patient-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200px;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: width 0.4s ease-in-out;
+  overflow: hidden;
+}
+
+.patient-sidebar.collapsed {
+  width: 50px;
+}
+
+.patient-sidebar .sidebar-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #EEF2FF;
+}
+
+.patient-sidebar .header-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2E8B57;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.patient-sidebar.collapsed .header-text {
+  opacity: 0;
+}
+
+.patient-sidebar .sidebar-toggler {
+  position: absolute;
+  right: 20px;
+  height: 35px;
+  width: 35px;
+  color: #2E8B57;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  background: #EEF2FF;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.patient-sidebar.collapsed .sidebar-toggler {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.patient-sidebar.collapsed:hover .sidebar-toggler {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.patient-sidebar .sidebar-toggler span {
+  font-size: 1.75rem;
+  transition: transform 0.3s ease;
+}
+
+.patient-sidebar.expanded .sidebar-toggler span {
+  transform: rotate(180deg);
+}
+
+.patient-sidebar .sidebar-toggler:hover {
+  background: #d9e1fd;
+}
+
+.patient-sidebar .sidebar-nav {
+  padding: 20px 0;
+}
+
+.patient-sidebar .nav-list {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+  padding: 0 15px;
+  flex-direction: column;
+  transform: translateY(15px);
+  transition: 0.4s ease-in-out;
+}
+
+.patient-sidebar .nav-item {
+  position: relative;
+}
+
+.patient-sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #64748B;
+  border-radius: 8px;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+.patient-sidebar .nav-link:hover {
+  background: #EEF2FF;
+  color: #2E8B57;
+}
+
+.patient-sidebar .nav-link.active {
+  background: #EEF2FF;
+  color: #2E8B57;
+}
+
+.patient-sidebar .nav-link i {
+  font-size: 1.25rem;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar .nav-link span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar.collapsed .nav-link span {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.patient-sidebar.collapsed:hover .nav-link span {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.patient-sidebar .dropdown-container {
+  position: relative;
+}
+
+.patient-sidebar .dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 15px;
+  color: #64748B;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar .dropdown-toggle:hover {
+  background: #EEF2FF;
+  color: #2E8B57;
+}
+
+.patient-sidebar .dropdown-toggle i {
+  font-size: 1.25rem;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar .dropdown-toggle span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar.collapsed .dropdown-toggle span {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.patient-sidebar.collapsed:hover .dropdown-toggle span {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.patient-sidebar .dropdown-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.patient-sidebar .dropdown-container.open .dropdown-menu {
+  height: auto;
+}
+
+.patient-sidebar .dropdown-item {
+  padding: 8px 15px 8px 45px;
+  color: #64748B;
+  text-decoration: none;
+  display: block;
+  transition: 0.3s ease;
+}
+
+.patient-sidebar .dropdown-item:hover {
+  background: #EEF2FF;
+  color: #2E8B57;
+}
+
+.patient-sidebar .dropdown-item.active {
+  background: #EEF2FF;
+  color: #2E8B57;
+}
+
+@media (max-width: 1024px) {
+  .patient-sidebar {
+    width: 50px;
+  }
+  
+  .patient-sidebar .header-text,
+  .patient-sidebar .nav-link span,
+  .patient-sidebar .dropdown-toggle span {
+    opacity: 0;
+    pointer-events: none;
+  }
+} 

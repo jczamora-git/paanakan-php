@@ -12,91 +12,73 @@ require '../connections/connections.php';
 // Get the database connection
 $pdo = connection();
 
-// Handle adding, editing, and deleting patients
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'add') {
-        // Add Patient
-        $case_id = $_POST['case_id'];
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $gender = $_POST['gender'];
-        $dob = $_POST['date_of_birth'];
-        $contact_number = $_POST['contact_number'];
-        $address = $_POST['address'];
-        $medical_history = $_POST['medical_history'];
+// Pagination settings
+$limit = 10; // Number of records per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page
+$offset = ($page - 1) * $limit; // Calculate the offset for SQL query
 
-        $query = "INSERT INTO patients (case_id, first_name, last_name, gender, date_of_birth, contact_number, address)
-                  VALUES (:case_id, :first_name, :last_name, :gender, :dob, :contact_number, :address)";
-        $stmt = $pdo->prepare($query);
+// Get search and filter parameters
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$gender = isset($_GET['gender']) ? trim($_GET['gender']) : '';
+$ageRange = isset($_GET['age_range']) ? trim($_GET['age_range']) : '';
 
-        try {
-            $stmt->execute([
-                ':case_id' => $case_id,
-                ':first_name' => $first_name,
-                ':last_name' => $last_name,
-                ':gender' => $gender,
-                ':dob' => $dob,
-                ':contact_number' => $contact_number,
-                ':address' => $address,
-            ]);
-            $_SESSION['message'] = "Patient added successfully.";
-        } catch (PDOException $e) {
-            $_SESSION['error'] = "Failed to add patient: " . $e->getMessage();
-        }
-    } elseif ($_POST['action'] === 'edit') {
-        // Edit Patient
-        $patient_id = intval($_POST['patient_id']);
-        $case_id = $_POST['case_id'];
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $gender = $_POST['gender'];
-        $dob = $_POST['date_of_birth'];
-        $contact_number = $_POST['contact_number'];
-        $address = $_POST['address'];
+// Build the WHERE clause for search and filters
+$whereConditions = [];
+$params = [];
 
-        $query = "UPDATE patients
-                  SET case_id = :case_id, first_name = :first_name, last_name = :last_name, gender = :gender,
-                      date_of_birth = :dob, contact_number = :contact_number, address = :address
-                  WHERE patient_id = :patient_id";
-        $stmt = $pdo->prepare($query);
-
-        try {
-            $stmt->execute([
-                ':case_id' => $case_id,
-                ':first_name' => $first_name,
-                ':last_name' => $last_name,
-                ':gender' => $gender,
-                ':dob' => $dob,
-                ':contact_number' => $contact_number,
-                ':address' => $address,
-                ':patient_id' => $patient_id,
-            ]);
-            $_SESSION['message'] = "Patient updated successfully.";
-        } catch (PDOException $e) {
-            $_SESSION['error'] = "Failed to update patient: " . $e->getMessage();
-        }
-    } elseif ($_POST['action'] === 'delete') {
-        // Delete Patient
-        $patient_id = intval($_POST['patient_id']);
-        $query = "DELETE FROM patients WHERE patient_id = :patient_id";
-        $stmt = $pdo->prepare($query);
-
-        try {
-            $stmt->execute([':patient_id' => $patient_id]);
-            $_SESSION['message'] = "Patient deleted successfully.";
-        } catch (PDOException $e) {
-            $_SESSION['error'] = "Failed to delete patient: " . $e->getMessage();
-        }
-    }
-
-    header("Location: patient.php");
-    exit();
+if (!empty($search)) {
+    $whereConditions[] = "(first_name LIKE :search OR last_name LIKE :search OR case_id LIKE :search)";
+    $params[':search'] = "%$search%";
 }
 
-// Fetch all patients
-$query = "SELECT * FROM patients ORDER BY created_at DESC";
-$stmt = $pdo->query($query);
+if (!empty($gender)) {
+    $whereConditions[] = "gender = :gender";
+    $params[':gender'] = $gender;
+}
+
+if (!empty($ageRange)) {
+    $currentDate = new DateTime();
+    switch($ageRange) {
+        case '0-18':
+            $whereConditions[] = "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) < 18";
+            break;
+        case '19-30':
+            $whereConditions[] = "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 19 AND 30";
+            break;
+        case '31-50':
+            $whereConditions[] = "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 31 AND 50";
+            break;
+        case '51+':
+            $whereConditions[] = "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) >= 51";
+            break;
+    }
+}
+
+$whereClause = !empty($whereConditions) ? "WHERE " . implode(" AND ", $whereConditions) : "";
+
+// Fetch patients with pagination and search
+$query = "SELECT * FROM patients $whereClause ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+$stmt = $pdo->prepare($query);
+
+// Bind all parameters
+foreach ($params as $key => $value) {
+    $stmt->bindValue($key, $value);
+}
+$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch total patient count with search conditions
+$totalQuery = "SELECT COUNT(*) FROM patients $whereClause";
+$totalStmt = $pdo->prepare($totalQuery);
+foreach ($params as $key => $value) {
+    $totalStmt->bindValue($key, $value);
+}
+$totalStmt->execute();
+$totalCount = $totalStmt->fetchColumn();
+$totalPages = ceil($totalCount / $limit); // Total pages
+
 ?>
 
 <!DOCTYPE html>
@@ -111,213 +93,331 @@ $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../css/sidebar.css"><!-- Sidebar styles -->
     <link rel="stylesheet" href="../css/components.css"><!-- Table styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E8B57;
+            --primary-light: #3CB371;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #eee;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .dashboard-main-content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 270px;
+            transition: all 0.4s ease;
+            background-color: #f8f9fa;
+        }
+        .sidebar.collapsed ~ .dashboard-main-content {
+            margin-left: 85px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .sidebar.collapsed ~ .dashboard-main-content {
+                margin-left: 0;
+                padding-left: 85px;
+            }
+        }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table thead th {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .table tbody tr:hover {
+            background-color: rgba(46, 139, 87, 0.05);
+        }
+        .btn-action {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .page-link {
+            color: var(--primary-color);
+            border-color: var(--border-color);
+        }
+        .page-link:hover {
+            color: var(--primary-light);
+            background-color: var(--secondary-color);
+        }
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+        }
+        .action-icon {
+            background: none;
+            border: none;
+            padding: 0 4px;
+            font-size: 1.1rem;
+            line-height: 1;
+            vertical-align: middle;
+            transition: color 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+            outline: none;
+        }
+        .action-icon:focus, .action-icon:hover {
+            color: #17633c !important;
+            background: none;
+            box-shadow: none;
+            outline: none;
+        }
+    </style>
 </head>
 
-<body style="font-family: 'Poppins', sans-serif;">
+<body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="dashboard-sidebar">
-            <div class="sidebar-header">
-                <img src="../PSC_banner.png" alt="Paanakan Logo">
-            </div>
-            <ul>
-                <li><a href="dashboard.php" class="active"><span class="material-icons">dashboard</span><span class="link-text">Dashboard</span></a></li>
-                <li><a href="manage_appointments.php"><span class="material-icons">event</span><span class="link-text">Appointments</span></a></li>
-                <li><a href="manage_health_records.php"><span class="material-icons">folder</span><span class="link-text">Health Records</span></a></li>
-                <li><a href="transactions.php"><span class="material-icons">local_hospital</span><span class="link-text">Medical Services</span></a></li>
-                <li><a href="patient.php"><span class="material-icons">person</span><span class="link-text">Patients</span></a></li>
-                <li><a href="supply.php"><span class="material-icons">inventory_2</span><span class="link-text">Supplies</span></a></li>
-                <li><a href="billing.php"><span class="material-icons">receipt</span><span class="link-text">Billing</span></a></li>
-                <li><a href="reports.php"><span class="material-icons">assessment</span><span class="link-text">Reports</span></a></li>
-                <li><a href="manage_users.php"><span class="material-icons">people</span><span class="link-text">Users</span></a></li>
-                <li><a href="logs.php"><span class="material-icons">history</span><span class="link-text">Logs</span></a></li>
-                <li><a href="../logout.php"><span class="material-icons">logout</span><span class="link-text">Logout</span></a></li>
-            </ul>
-        </aside>
+        <?php include '../sidebar.php'; ?>
 
         <!-- Main Content -->
         <main class="dashboard-main-content">
-            <div class="container mt-5">
-                <h2 class="mb-4">Manage Patients</h2>
-
-                <!-- Handle success/error messages -->
-                <?php if (isset($_SESSION['message'])): ?>
-                    <div class="alert alert-success"><?= $_SESSION['message'] ?></div>
-                    <?php unset($_SESSION['message']); ?>
-                <?php elseif (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
-                    <?php unset($_SESSION['error']); ?>
-                <?php endif; ?>
-
-                <!-- Add New Patient -->
-                <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addPatientModal">Add Patient</button>
-
-                <!-- Patients Table -->
-                <div class="table-container shadow rounded bg-white p-3">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Case ID</th>
-                                <th>Full Name</th>
-                                <th>Gender</th>
-                                <th>DOB</th>
-                                <th>Contact</th>
-                                <th>Address</th> <!-- New Address Column -->
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (!empty($patients)): ?>
-                                <?php foreach ($patients as $patient): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($patient['patient_id']) ?></td>
-                                        <td><?= htmlspecialchars($patient['case_id']) ?></td>
-                                        <td><?= htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
-                                        <td><?= htmlspecialchars($patient['gender']) ?></td>
-                                        <td><?= (new DateTime($patient['date_of_birth']))->format('F j, Y') ?></td>
-                                        <td><?= htmlspecialchars($patient['contact_number']) ?></td>
-                                        <td><?= htmlspecialchars($patient['address']) ?></td> <!-- Display Address -->
-                        
-                                        <td>
-                                            <!-- Edit Button -->
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPatientModal<?= $patient['patient_id'] ?>">Edit</button>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Edit Patient Modal -->
-                                    <div class="modal fade" id="editPatientModal<?= $patient['patient_id'] ?>" tabindex="-1" aria-labelledby="editPatientModalLabel<?= $patient['patient_id'] ?>" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <form action="" method="POST">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editPatientModalLabel<?= $patient['patient_id'] ?>">Edit Patient</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <input type="hidden" name="action" value="edit">
-                                                        <input type="hidden" name="patient_id" value="<?= $patient['patient_id'] ?>">
-
-                                                        <!-- Case ID -->
-                                                        <div class="mb-3">
-                                                            <label for="case_id" class="form-label">Case ID</label>
-                                                            <input type="text" name="case_id" id="case_id" value="<?= htmlspecialchars($patient['case_id']) ?>" class="form-control" required>
-                                                        </div>
-                                                        <!-- First Name -->
-                                                        <div class="mb-3">
-                                                            <label for="first_name" class="form-label">First Name</label>
-                                                            <input type="text" name="first_name" id="first_name" value="<?= htmlspecialchars($patient['first_name']) ?>" class="form-control" required>
-                                                        </div>
-                                                        <!-- Last Name -->
-                                                        <div class="mb-3">
-                                                            <label for="last_name" class="form-label">Last Name</label>
-                                                            <input type="text" name="last_name" id="last_name" value="<?= htmlspecialchars($patient['last_name']) ?>" class="form-control" required>
-                                                        </div>
-                                                        <!-- Gender -->
-                                                        <div class="mb-3">
-                                                            <label for="gender" class="form-label">Gender</label>
-                                                            <select name="gender" id="gender" class="form-select" required>
-                                                                <option value="Male" <?= $patient['gender'] === 'Male' ? 'selected' : '' ?>>Male</option>
-                                                                <option value="Female" <?= $patient['gender'] === 'Female' ? 'selected' : '' ?>>Female</option>
-                                                            </select>
-                                                        </div>
-                                                        <!-- Date of Birth -->
-                                                        <div class="mb-3">
-                                                            <label for="date_of_birth" class="form-label">Date of Birth</label>
-                                                            <input type="date" name="date_of_birth" id="date_of_birth" value="<?= htmlspecialchars($patient['date_of_birth']) ?>" class="form-control" required>
-                                                        </div>
-                                                        <!-- Contact Number -->
-                                                        <div class="mb-3">
-                                                            <label for="contact_number" class="form-label">Contact Number</label>
-                                                            <input type="text" name="contact_number" id="contact_number" value="<?= htmlspecialchars($patient['contact_number']) ?>" class="form-control" required>
-                                                        </div>
-                                                        <!-- Address -->
-                                                        <div class="mb-3">
-                                                            <label for="address" class="form-label">Address</label>
-                                                            <textarea name="address" id="address" class="form-control"><?= htmlspecialchars($patient['address']) ?></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-primary">Update Patient</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="text-center">No patients found.</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+            <?php include '../admin/breadcrumb.php'; ?>
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h2 class="mb-0">
+                            <i class="fas fa-users me-2"></i>Patients
+                        </h2>
+                        <p class="mb-0 mt-2">
+                            <i class="fas fa-user-friends me-2"></i>Total Patients: <?= $totalCount ?>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="add_patient.php" class="btn btn-success">
+                            <i class="fas fa-user-plus me-2"></i>Add Patient
+                        </a>
+                    </div>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Add Patient Modal -->
-    <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addPatientModalLabel">Add Patient</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="add">
-                        <!-- Case ID -->
-                        <div class="mb-3">
-                            <label for="case_id" class="form-label">Case ID</label>
-                            <input type="text" name="case_id" id="case_id" class="form-control" required>
-                        </div>
-                        <!-- First Name -->
-                        <div class="mb-3">
-                            <label for="first_name" class="form-label">First Name</label>
-                            <input type="text" name="first_name" id="first_name" class="form-control" required>
-                        </div>
-                        <!-- Last Name -->
-                        <div class="mb-3">
-                            <label for="last_name" class="form-label">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" class="form-control" required>
-                        </div>
-                        <!-- Gender -->
-                        <div class="mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select name="gender" id="gender" class="form-select" required>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-                        <!-- Date of Birth -->
-                        <div class="mb-3">
-                            <label for="date_of_birth" class="form-label">Date of Birth</label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required>
-                        </div>
-                        <!-- Contact Number -->
-                        <div class="mb-3">
-                            <label for="contact_number" class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" id="contact_number" class="form-control" required>
-                        </div>
-                        <!-- Address -->
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea name="address" id="address" class="form-control"></textarea>
+            <!-- Search and Filter Section -->
+            <div class="search-container">
+                <form id="searchForm" class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search patients by name, case ID..." value="<?= htmlspecialchars($search) ?>">
+                            <button class="btn btn-outline-success" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add Patient</button>
+                    <div class="col-md-3">
+                        <select id="genderFilter" name="gender" class="form-select">
+                            <option value="">All Genders</option>
+                            <option value="Male" <?= $gender === 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $gender === 'Female' ? 'selected' : '' ?>>Female</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="ageFilter" name="age_range" class="form-select">
+                            <option value="">All Ages</option>
+                            <option value="0-18" <?= $ageRange === '0-18' ? 'selected' : '' ?>>Under 18</option>
+                            <option value="19-30" <?= $ageRange === '19-30' ? 'selected' : '' ?>>19-30</option>
+                            <option value="31-50" <?= $ageRange === '31-50' ? 'selected' : '' ?>>31-50</option>
+                            <option value="51+" <?= $ageRange === '51+' ? 'selected' : '' ?>>51 and above</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="patient.php" class="btn btn-secondary w-100">
+                            <i class="fas fa-redo-alt me-2"></i>Reset
+                        </a>
                     </div>
                 </form>
             </div>
-        </div>
+
+            <!-- Success/Error Messages -->
+            <?php if (isset($_SESSION['message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i><?= $_SESSION['message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['message']); ?>
+            <?php elseif (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['error'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <!-- Patients Table -->
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Case ID</th>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>DOB</th>
+                            <th>Contact</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($patients)): ?>
+                            <?php foreach ($patients as $index => $patient): ?>
+                                <tr>
+                                    <td><?= (($page - 1) * $limit) + $index + 1 ?></td>
+                                    <td><?= htmlspecialchars($patient['case_id']) ?></td>
+                                    <td><?= htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
+                                    <td><?= htmlspecialchars($patient['gender']) ?></td>
+                                    <td><?= (new DateTime($patient['date_of_birth']))->format('F j, Y') ?></td>
+                                    <td><?= htmlspecialchars($patient['contact_number']) ?></td>
+                                    <td><?= htmlspecialchars($patient['address']) ?></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="edit_patient.php?patient_id=<?= $patient['patient_id'] ?>" class="btn btn-info btn-action" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="../admin/patient_health_records.php?patient_id=<?= $patient['patient_id'] ?>" class="btn btn-primary btn-action" title="View Records">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <i class="fas fa-info-circle me-2"></i>No patients found.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <?php if ($totalPages > 1): ?>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <?php
+                        // Build query string for pagination links
+                        $queryParams = [];
+                        if (!empty($search)) $queryParams['search'] = $search;
+                        if (!empty($gender)) $queryParams['gender'] = $gender;
+                        if (!empty($ageRange)) $queryParams['age_range'] = $ageRange;
+                        
+                        // Function to generate pagination URL
+                        function getPageUrl($pageNum, $queryParams) {
+                            $queryParams['page'] = $pageNum;
+                            return '?' . http_build_query($queryParams);
+                        }
+                        ?>
+                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= getPageUrl(1, $queryParams) ?>" aria-label="First">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= getPageUrl(max(1, $page - 1), $queryParams) ?>" aria-label="Previous">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <?php
+                        $startPage = max(1, $page - 2);
+                        $endPage = min($totalPages, $page + 2);
+                        for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <li class="page-item <?= ($i === $page) ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= getPageUrl($i, $queryParams) ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= getPageUrl(min($totalPages, $page + 1), $queryParams) ?>" aria-label="Next">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= getPageUrl($totalPages, $queryParams) ?>" aria-label="Last">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+        </main>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const genderFilter = document.getElementById('genderFilter');
+        const ageFilter = document.getElementById('ageFilter');
+        
+        let searchTimeout;
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchForm.submit();
+            }, 500); // 500ms delay for search input
+        }
+
+        // Add event listeners
+        searchInput.addEventListener('input', handleSearch);
+        genderFilter.addEventListener('change', () => searchForm.submit());
+        ageFilter.addEventListener('change', () => searchForm.submit());
+    });
+    </script>
 </body>
 
 </html>

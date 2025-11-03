@@ -1,0 +1,65 @@
+.row {
+    display: flex;
+    justify-content: space-between; /* Distribute the cards evenly */
+    flex-wrap: wrap; /* Allow the cards to wrap on smaller screens */
+    gap: 10px; /* Space between cards */
+}
+
+.card-title {
+    font-size: 20px !important;  /* Force the size */
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 11px !important;  /* Force the size */
+}
+
+
+.category-card {
+    flex: 1 1 18%; /* Makes sure the cards are responsive and will fit in the row */
+    min-width: 250px; /* Ensures cards don’t become too small */
+    height: 170px; /* Keeps a uniform card height */
+    color: white;
+    cursor: pointer;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-card img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px; /* Adds space between image and text */
+}
+
+.category-card h5 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.category-card p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Gradient colors */
+.ultrasound {
+    background: linear-gradient(135deg, #61E8E1, #2F0BD2);
+}
+
+.laboratory {
+    background: linear-gradient(135deg, #F25757, #D20B89);
+}
+
+.maternity-checkup {
+    background: linear-gradient(135deg, #FCAB64, #D25E0B);
+}
+
+.vaccination {
+    background: linear-gradient(135deg, #272727, #000000);
+}
+
+.surgical-procedure {
+    background: linear-gradient(135deg, #AB87FF, #1100FF);
+}

@@ -1,8 +1,13 @@
 /* Table container styling */
 .dashboard-main-content {
-    margin-left: 200px; /* Default margin for collapsed sidebar */
+    margin-left: 270px;
     padding: 20px;
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.4s ease-in-out;
+}
+
+/* Adjust margin when sidebar is collapsed */
+.sidebar.collapsed ~ .dashboard-main-content {
+    margin-left: 85px;
 }
 
 .table-container {
@@ -80,22 +85,93 @@
     padding: 0;
     border-radius: 3px; /* Slightly rounded corners */
     border: 1px solid #ddd; /* Thin border */
-    color: #007bff; /* Default link color */
+    color: #2E8B57; /* Default link color */
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .pagination .page-link:hover {
     background-color: #f1f1f1; /* Light hover background */
-    color: #0056b3; /* Darker hover color */
+    color: #2E8B57; /* Darker hover color */
     text-decoration: none;
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #007bff; /* Active background */
+    background-color: #2E8B57; /* Active background */
     color: #ffffff; /* Active text color */
-    border-color: #007bff;
+    border-color: #2E8B57;
 }
 
 .pagination .page-link span {
     font-size: 14px; /* Adjust icon size */
+}
+/* Ensure no extra margin or padding around the buttons */
+button.btn-sm {
+    margin: 0; /* Remove any margin */
+    padding: 5px 10px; /* Adjust padding to fit your design */
+}
+
+.btn-xs{
+    margin: 0; /* Remove any margin */
+    padding: 2px 2px; /* Adjust padding to fit your design */
+    border: 0px;
+    background-color: transparent;
+    color: black;
+}
+
+form {
+    margin: 0; /* Remove any margin between forms */
+}
+
+/* Adjust the flex container to align items properly */
+.d-flex {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 5px; /* Add a small gap between the buttons */
+}
+/* Align header and search bar in a row */
+.d-flex {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Search bar styling */
+.search-bar {
+    width: 250px; /* Set a fixed width */
+}
+
+.search-bar input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 10px;
+    width: 100%;
+}
+
+/* Ensure proper spacing */
+.table-container {
+    margin-bottom: 20px;
+}
+.dashboard-container {
+    max-width: 100%; /* Ensure it doesn't exceed the viewport width */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    margin: 0 auto; /* Center the container */
+}
+
+.alert {
+    max-width: 600px;
+    margin: 10px auto;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Prevent unnecessary scrollbars */
+html, body {
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    overflow-y: auto; /* Allow vertical scrolling only when necessary */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    width: 100%; /* Ensure body doesn't exceed viewport width */
+    height: 100%; /* Ensure body doesn't exceed viewport height */
 }

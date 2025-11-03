@@ -34,3 +34,19 @@
     border-color: #272727; /* Highlight border on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
 }
+/* Ensure no extra margin or padding around the buttons */
+button.btn-sm {
+    margin: 0; /* Remove any margin */
+    padding: 5px 10px; /* Adjust padding to fit your design */
+}
+
+form {
+    margin: 0; /* Remove any margin between forms */
+}
+
+/* Adjust the flex container to align items properly */
+.d-flex {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 5px; /* Add a small gap between the buttons */
+}

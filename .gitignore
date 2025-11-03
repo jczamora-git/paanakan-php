@@ -1,0 +1,60 @@
+# Environment files with sensitive data
+.env
+.env.local
+.env.*.local
+
+# API Keys and credentials
+SENDGRID_SETUP.md
+config/credentials.php
+
+# IDE and Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Composer
+vendor/
+composer.lock
+
+# Node modules (if using any frontend tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Cache files
+.cache/
+*.cache
+
+# Session files
+sessions/
+tmp/
+
+# Database dumps
+*.sql
+!paanakandb.sql
+!ultrasound_reports.sql
+
+# Build artifacts
+dist/
+build/
+
+# OS specific
+.env.example
